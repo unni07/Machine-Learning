@@ -1,0 +1,7 @@
+hair,feathers,eggs,milk,airborne,aquatic,predator,toothed,backbone,breathes,venomous,fins,legs,tail,domestic,catsize,type
+TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,0,FALSE,FALSE,FALSE,fish
+FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,2,TRUE,TRUE,TRUE,mammal
+,,,,,,,,,,,,4,,,,
+,,,,,,,,,,,,6,,,,
+,,,,,,,,,,,,8,,,,
+,,,,,,,,,,,,5,,,,

@@ -1,0 +1,4 @@
+Outlook,Temperature,Humidity,Windy,Play
+Sunny,hot,high,FALSE,no
+Overcast,mild,normal,TRUE,yes
+Rainy,cool,,,
