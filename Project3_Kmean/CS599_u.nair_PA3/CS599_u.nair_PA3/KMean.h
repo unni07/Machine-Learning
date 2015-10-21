@@ -3,7 +3,7 @@
 #include "cluster.h"
 #include "Points.h"
 #include "positionVector.h"
-
+#include <fstream>
 typedef std::map<std::string, std::vector<std::string>> virtualFile;
 typedef std::vector<std::string> filter;
 
@@ -41,15 +41,21 @@ private:
 	void clustering();
 	lines filter;
 	/*to hold cluster and cluster data*/
-	std::map<int, std::vector<int>> clustersX;
-	std::map<int, std::vector<int>> clustersY;
+	std::map<int, std::vector<float>> clustersX;
+	std::map<int, std::vector<float>> clustersY;
 	//Max Value
-	int maxValueX;
-	int maxValueY;
+	float maxValueX;
+	float maxValueY;
+	float minValueX;
+	float minValueY;
 	/*return distance*/
 	double distance(positionVector,positionVector);
 	/*Re compile cluster positions*/
 	void recompileClusterPositions();
+	/*Cluster Position Changed*/
+	bool clusterPositionChanged();
+	/*clean the temp clusters*/
+	void clearClusters();
 	KMean();
 	~KMean();
 };

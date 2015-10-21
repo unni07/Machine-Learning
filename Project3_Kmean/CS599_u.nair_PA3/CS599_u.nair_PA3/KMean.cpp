@@ -3,7 +3,9 @@
 #include <algorithm>
 #include <numeric>
 
-#define MAX_ITERATOR 5
+#define MAX_ITERATOR 8
+#include <ctime>
+
 KMean& KMean::getInstance()
 {
 	static KMean kmean;
@@ -20,7 +22,56 @@ void KMean::readFile(std::string fileName,int numClusters)
 
 void KMean::printOutputwithFileName(std::string)
 {
+	std::ofstream file;
+	file.open("Output.txt");
+	file << "Kmean Clustering: " << std::endl << std::endl << std::endl;
+	
+	auto itr = clustersData.begin();
+	auto itrBegin = clustersData.begin();
+	auto itrEnd = clustersData.end();
 
+	auto itrFilter = filter.begin();
+	auto itrBeginFilter = filter.begin();
+	auto itrEndFilter = filter.end();
+	bool attributeStatus = true;
+	file << "Cluster Centroid " << std::endl << std::endl;
+	++itrFilter;
+	for (; itrFilter != itrEndFilter; ++itrFilter)
+	{
+		file << (*itrFilter) << "\t";
+		if (attributeStatus)
+		{
+			for (; itr != itrEnd; ++itr)
+			{
+				file << (*itr)->position.xposition << "\t";
+			}
+			attributeStatus = false;
+			itr = itrBegin;
+		}
+		else
+		{
+			for (; itr != itrEnd; ++itr)
+			{
+				file << (*itr)->position.yposition << "\t";
+			
+			}
+		}
+		file << std::endl;
+	}
+
+	file << std::endl;
+	file << "Cluster Instances" << std::endl;
+	auto itrCluster = clustersX.begin();
+	auto itrClusterBegin = clustersX.begin();
+	auto itrClusterEnd = clustersX.end();
+	int index = 0;
+	for (; itrCluster != itrClusterEnd; ++itrCluster)
+	{
+		
+		file << index << "\t" << (*itrCluster).second.size() << std::endl;
+		index++;
+	}
+	file.close();
 }
 
 void KMean::getRawFormat(std::string fileName)
@@ -72,12 +123,24 @@ void KMean::convertTheFileintoKMeanFormat()
 		std::string dataX = data.substr(0,posX++);
 		std::string dataY = data.substr(posX);
 		Points *      pts = new Points();
-		pts->position.xposition = std::stoi(dataX);
+		pts->position.xposition = std::stof(dataX);
 		if (pts->position.xposition > maxValueX)
+		{
 			maxValueX = pts->position.xposition;
-		pts->position.yposition = std::stoi(dataY);
+		}
+		if (pts->position.xposition < minValueX)
+		{
+			minValueX = pts->position.xposition;;
+		}
+		pts->position.yposition = std::stof(dataY);
 		if (pts->position.yposition > maxValueY)
+		{
 			maxValueY = pts->position.yposition;
+		}
+		if (pts->position.yposition < minValueY)
+		{
+			minValueY = pts->position.yposition;;
+		}
 		points.push_back(pts);
 	
 	}
@@ -85,12 +148,15 @@ void KMean::convertTheFileintoKMeanFormat()
 
 void KMean::initRandomClusters()
 {
+	srand(k);
 	for (int i = 0; i < k; i++)
 	{
+		
 		cluster* cls = new cluster();
 		cls->clusterID = i;
-		cls->position.xposition = /*static_cast<float>*/(rand() % maxValueX);
-		cls->position.yposition = /*static_cast<float>*/(rand() % maxValueY);
+		cls->position.xposition = rand() % (int)(maxValueX - minValueX) + minValueX;
+		cls->position.yposition = rand() % (int)(maxValueY - minValueY) + minValueY;
+		
 		clustersData.push_back(cls);
 	}
 }
@@ -99,6 +165,7 @@ void KMean::processData()
 {
 	convertTheFileintoKMeanFormat(); // need to change the invoker loaction
 	initRandomClusters();
+	clustering();
 }
 
 void KMean::clustering()
@@ -109,27 +176,42 @@ void KMean::clustering()
 	auto itrClusters      = clustersData.begin();
 	auto itrBeginClusters = clustersData.begin();
 	auto itrEndClusters   = clustersData.end();
-	std::map<int,double>distances;
+	bool anythingChanged = true;
+	
 	int iterator = 0;
-	while (iterator < MAX_ITERATOR)
+	while (anythingChanged && iterator<MAX_ITERATOR)
 	{
-		for (; itrPoints != itrEndPoints; ++itrEndPoints)
+		itrPoints = itrBeginPoints;
+		for (; itrPoints != itrEndPoints; ++itrPoints)
 		{
 			float max = INT_MIN;
-			for (; itrEndClusters != itrBeginClusters; ++itrClusters)
+			int clusterID = -1;
+			double minElement = static_cast<double>(INT_MAX);
+			itrClusters = itrBeginClusters;
+			for (; itrClusters != itrEndClusters; ++itrClusters)
 			{
-				auto tempDistance = distance((*itrEndClusters)->position, (*itrPoints)->position);
-				distances.insert(std::make_pair((*itrClusters)->clusterID, tempDistance));
+				auto tempDistance = distance((*itrClusters)->position, (*itrPoints)->position);
+				if (minElement > tempDistance)
+				{
+					minElement = tempDistance;
+					clusterID = (*itrClusters)->clusterID;
+				}
 			}
-			auto mapItrbegin = distances.begin();
-			auto mapItrEnd = distances.end();
-			auto itr = std::max_element(mapItrbegin, mapItrEnd);
-			(*itrPoints)->clusterGroupNum = itr->first;
-			clustersX[itr->first].push_back((*itrPoints)->position.xposition);
-			clustersY[itr->first].push_back((*itrPoints)->position.yposition);
-			distances.clear();
+
+			(*itrPoints)->clusterGroupNum = clusterID;
+			clustersX[clusterID].push_back((*itrPoints)->position.xposition);
+			clustersY[clusterID].push_back((*itrPoints)->position.yposition);
 		}
 		recompileClusterPositions();
+		if (!clusterPositionChanged())
+		{
+			anythingChanged = false;
+		}
+		else
+		{
+			clearClusters();
+		}
+		iterator++;
 	}
 }
 
@@ -147,23 +229,60 @@ void KMean::recompileClusterPositions()
 	for (int i = 0; i < k;i++)
 	{
 		auto vX = clustersX[i];
+		auto vY = clustersY[i];
+		/*clustersX[i].clear();
+		clustersY[i].clear();*/
 		auto sumX = std::accumulate(vX.begin(), vX.end(), 0.0);
 		auto meanX = sumX / vX.size();
 
-		auto vY = clustersY[i];
+		
 		auto sumY = std::accumulate(vY.begin(), vY.end(), 0.0);
 		auto meanY = sumY / vY.size();
+		if (vX.size() != 0)
+		{
+			clustersData[i]->prevPosition.xposition = clustersData[i]->position.xposition;
+			clustersData[i]->position.xposition = static_cast<float>(meanX);
+		}
+		if (vY.size() != 0)
+		{
+			clustersData[i]->prevPosition.yposition = clustersData[i]->position.yposition;
+			clustersData[i]->position.yposition = static_cast<float>(meanY);
+		}
+	}
+}
 
-		clustersData[i]->position.xposition = static_cast<int>(meanX);
-		clustersData[i]->position.yposition = static_cast<int>(meanY);
+bool KMean::clusterPositionChanged()
+{
+	auto itrBegin = clustersData.begin();
+	auto itrEnd =clustersData.end();
+	auto itr = itrBegin;
+	bool valueChanged = true;
+	for (; itr != itrEnd;++itr)
+	{
+		if ((*itr)->position.xposition == (*itr)->prevPosition.xposition && (*itr)->position.yposition == (*itr)->prevPosition.yposition)
+		{
+			valueChanged = false;
+		}
+	}
+	return valueChanged;
+}
+
+void KMean::clearClusters()
+{
+	for (int i = 0; i < k; i++)
+	{
+		clustersX[i].clear();
+		clustersY[i].clear();
 	}
 }
 
 KMean::KMean()
-{
-	maxValueX = INT_MIN;
-	maxValueY = INT_MIN;
-}
+{										  
+	maxValueX = static_cast<float>(INT_MIN);
+	maxValueY = static_cast<float>(INT_MIN);
+	minValueX = static_cast<float>(INT_MAX);
+	minValueY = static_cast<float>(INT_MAX);
+}										  
 
 KMean::~KMean()
 {

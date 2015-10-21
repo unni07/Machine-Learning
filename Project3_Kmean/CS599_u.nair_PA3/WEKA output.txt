@@ -1,0 +1,29 @@
+kMeans
+======
+
+Number of iterations: 10
+Within cluster sum of squared errors: 83.88903154500058
+Missing values globally replaced with mean/mode
+
+Cluster centroids:
+                               Cluster#
+Attribute          Full Data          0          1          2
+                        (85)       (28)       (29)       (28)
+=============================================================
+name                 Youyang    Youyang    Jeeyong     Yo Han
+height (inches)      68.0647    64.0357    69.7586    70.3393
+weight (pounds)     144.9294     123.25   141.4828   170.1786
+
+
+
+
+Time taken to build model (full training data) : 0 seconds
+
+=== Model and evaluation on training set ===
+
+Clustered Instances
+
+0      28 ( 33%)
+1      29 ( 34%)
+2      28 ( 33%)
+

@@ -3,7 +3,8 @@
 
 Points::Points()
 {
-	position.xposition = position.yposition = clusterGroupNum = 0;
+	position.xposition = position.yposition  = 0.0f;
+	clusterGroupNum = 0;
 }
 
 

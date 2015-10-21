@@ -1,0 +1,12 @@
+Kmean Clustering: 
+
+
+Cluster Centroid 
+
+height (inches)	70.1167	64.381	68.5294	
+weight (pounds)	169.333	116.857	140.735	
+
+Cluster Instances
+0	30
+1	21
+2	34

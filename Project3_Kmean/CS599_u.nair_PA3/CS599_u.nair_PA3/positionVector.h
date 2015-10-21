@@ -3,8 +3,8 @@
 class positionVector
 {
 public:
-	int xposition;
-	int yposition;
+	float xposition;
+	float yposition;
 	positionVector();
 	~positionVector();
 };
