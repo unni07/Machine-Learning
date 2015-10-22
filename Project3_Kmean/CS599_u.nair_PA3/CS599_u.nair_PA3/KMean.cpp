@@ -259,7 +259,8 @@ bool KMean::clusterPositionChanged()
 	bool valueChanged = true;
 	for (; itr != itrEnd;++itr)
 	{
-		if ((*itr)->position.xposition == (*itr)->prevPosition.xposition && (*itr)->position.yposition == (*itr)->prevPosition.yposition)
+		if ((*itr)->position.xposition == (*itr)->prevPosition.xposition && 
+			(*itr)->position.yposition == (*itr)->prevPosition.yposition) //weirdest thing its working with float. I was prepared to optimized it but as its working out I didnt mess with it
 		{
 			valueChanged = false;
 		}
