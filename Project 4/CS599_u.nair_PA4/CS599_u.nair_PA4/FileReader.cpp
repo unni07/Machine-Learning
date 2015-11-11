@@ -64,3 +64,8 @@ void FileReader::clear()
 	inputs.clear();
 }
 
+FileReader& FileReader::instance()
+{
+	static FileReader reader;
+	return reader;
+}

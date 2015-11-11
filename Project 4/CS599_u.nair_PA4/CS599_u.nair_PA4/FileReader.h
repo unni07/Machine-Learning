@@ -11,11 +11,13 @@ class FileReader
 {
 public:	
 	//functions
-	void readFile(std::string, int);										//function to read file
+	void readFile(std::string, int omit =0);										//function to read file
 	lines returnRawDatabse();												//function to return databse created
 	void setValueToAvoidLine(char);											//set starting character of line needed to omit
 	void setOmitValue(char);
 	void clear();
+
+	static FileReader& instance();
 private:
 	//file database;														//database read from file
 	char omitMe;
