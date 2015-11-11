@@ -19,6 +19,11 @@ User* UserFactory::getUser(std::string name)
 	return userDatabase[name];
 }
 
+std::map<std::string, User*> UserFactory::getDatabase() const
+{
+	return userDatabase;
+}
+
 UserFactory::UserFactory()
 {
 }

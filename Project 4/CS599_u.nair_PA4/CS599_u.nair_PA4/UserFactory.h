@@ -8,6 +8,8 @@ public:
 	 *or creates the user if its not there in the database and
 	 *returns the pointer to the user*/
 	User* getUser(std::string name);
+	/**this will fetch all the users*/
+	std::map<std::string, User*> getDatabase() const;
 private:
 	UserFactory();
 	~UserFactory();

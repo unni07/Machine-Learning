@@ -8,6 +8,11 @@ MathUtility& MathUtility::instance()
 	return mu;
 }
 
+float MathUtility::minkowskiDistance(float val1, float val2, int r)
+{
+	return abs(val1 - val2);
+}
+
 MathUtility::MathUtility()
 {
 }

@@ -8,11 +8,14 @@ public:
 	void initialize(std::string configFileName);
 	/**this will accept the filename of the database and setup the dataset to be used by recommender system*/
 	void fetchDatabase(std::string databaseName);
+	/**this fetches the table in this case or in more scalable version a user name*/
+	void testData(std::string fileName);
 private:
 	/**stores the name of the movies*/
 	std::vector<std::string> movienames;
 	/**stores the name of the user*/
 	std::vector<std::string> usernames;
+	
 
 
 };
