@@ -129,7 +129,7 @@ void Shop::testData(std::string fileName)
 			std::string val = line.substr(0, pos);
 			if (val.compare("?") != -1)
 			{
-				val = "-1";
+				val = "0";
 			}
 			std::stringstream ss;
 			ss.str(val);

@@ -2,8 +2,6 @@
 #include "RecommenderSystem.h"
 #include "UserFactory.h"
 #include "User.h"
-#include "CommodityFactory.h"
-#include "Commodity.h"
 #include "MathUtility.h"
 
 RecommenderSystem& RecommenderSystem::instance()
@@ -12,16 +10,18 @@ RecommenderSystem& RecommenderSystem::instance()
 	return rs;
 }
 
-std::string RecommenderSystem::getRecommendation(std::string username)
+std::pair<std::string, std::vector<float>> RecommenderSystem::getRecommendation(std::string username)
 {
 	std::string reqdUserName = getClosestUser(username);
 	std::string output;
-	float maxRating = 10.0f;
+	float maxRating = 11.0f;
+	std::vector<float> ratings;
 	auto movieList = UserFactory::instance().getUser(reqdUserName)->getWatchList();
 	auto reqdUsersMovieList = UserFactory::instance().getUser(username)->getWatchList();
 	auto itr = movieList.begin();
 	auto itrEnd = movieList.end();
 	bool found = false;
+	bool fillUptheList = true;
 	while (maxRating > 0)
 	{
 		itr = movieList.begin();
@@ -30,7 +30,7 @@ std::string RecommenderSystem::getRecommendation(std::string username)
 			if (itr->second == maxRating)
 			{
 				float rating = reqdUsersMovieList.find(itr->first)->second;
-				if (rating != -1)
+				if (rating == 0)
 				{
 					output = itr->first;
 					found = true;
@@ -38,9 +38,25 @@ std::string RecommenderSystem::getRecommendation(std::string username)
 			}
 			++itr;
 		}
+		
 		maxRating = maxRating -1.0f;
 	}
-	return output;
+	itr = movieList.begin();
+	itrEnd = movieList.end();
+	while (itr != itrEnd)
+	{
+		float rating = reqdUsersMovieList.find(itr->first)->second;
+		if (rating == 0)
+		{
+			ratings.push_back(itr->second);
+		}
+		else
+		{
+			ratings.push_back(rating);
+		}
+		++itr;
+	}
+	return std::make_pair(output,ratings);
 }
 
 RecommenderSystem::RecommenderSystem()
@@ -63,8 +79,8 @@ std::string RecommenderSystem::getClosestUser(std::string username)
 	auto movielistforusername = UserFactory::instance().getUser(username)->getWatchList();
 	auto itrReqduser = movielistforusername.begin();
 	auto itrReqduserEnd = movielistforusername.end();
-	float minDistance = 0.0f;
-	float maxValue = FLT_MAX;
+	double minDistance = 0.0f;
+	double maxValue = FLT_MIN;
 	std::string closestUser;
 
 	auto allusers = UserFactory::instance().getDatabase();
@@ -78,23 +94,27 @@ std::string RecommenderSystem::getClosestUser(std::string username)
 		itrReqduser = movielistforusername.begin();
 		while (itrReqduser != itrReqduserEnd)
 		{
-			if (itrReqduser->second != -1)
+			if (itrReqduser->second != 0)
 			{
 				auto movieListperUser = UserFactory::instance().getUser(itrAllUsers->first)->getWatchList();
 				//auto itrMovieList = movieListperUser.begin();
 				//auto itrMovieListEnd = movieListperUser.end();
 
 				float rating = movieListperUser.find(itrReqduser->first)->second;
-				minDistance = minDistance + MathUtility::instance().minkowskiDistance(rating, itrReqduser->second, 1);
+				//minDistance = minDistance + MathUtility::instance().minkowskiDistance(rating, itrReqduser->second, 1);
+				MathUtility::instance().pushDetailsForCalculation(rating, itrReqduser->second);
 			}
 			++itrReqduser;
 			
 		}
-		if (minDistance < maxValue)
+		minDistance = MathUtility::instance().calculateCosine();
+		MathUtility::instance().clear();
+		if (minDistance > maxValue)
 		{
 			maxValue = minDistance;
 			closestUser = itrAllUsers->first;
 			minDistance = 0.0f;
+			
 		}
 		++itrAllUsers;
 	}

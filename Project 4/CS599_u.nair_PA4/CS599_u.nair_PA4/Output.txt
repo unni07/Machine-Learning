@@ -1,6 +1,10 @@
 Recommendation for new users U1 , U2, U3 are as follows: 
 
 
-Recommendation for U1:  M9
-Recommendation for U2:  M5
-Recommendation for U3:  M4
+Recommendation for U1:  M10
+Recommendation for U2:  M06
+Recommendation for U3:  M09
+final Table: 
+U1	7	7	9	0	8	6	8	9	7	9	
+U2	7	7	9	4	4	8	9	7	7	8	
+U3	7	6	5	9	8	7	7	8	9	4	

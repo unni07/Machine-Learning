@@ -16,6 +16,6 @@ private:
 
 	/**container will hold all the commodity names in the shop
 	*this ensuring uniquness*/
-	std::map<std::string, Commodity*>  commodityDatabase;
+	std::unordered_map<std::string, Commodity*>  commodityDatabase;
 };
 

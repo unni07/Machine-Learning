@@ -81,4 +81,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Output.txt" />
+  </ItemGroup>
 </Project>

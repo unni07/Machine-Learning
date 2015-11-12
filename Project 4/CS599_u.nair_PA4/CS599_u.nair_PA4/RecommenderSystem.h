@@ -4,7 +4,7 @@ class RecommenderSystem
 public:
 	static RecommenderSystem& instance();
 	/**this will fetch a recommendation for the user based on the username*/
-	std::string getRecommendation(std::string username);
+	std::pair<std::string,std::vector<float>> getRecommendation(std::string username);
 private:
 	RecommenderSystem();
 	~RecommenderSystem();
